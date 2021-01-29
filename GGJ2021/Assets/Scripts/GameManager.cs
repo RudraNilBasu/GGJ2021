@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
     
     public Program_Mode ProgramMode;
     
+    public GameObject MiddleDoor;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +41,6 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (ProgramMode == Program_Mode.MENU)
@@ -58,6 +59,8 @@ public class GameManager : MonoBehaviour
             {
                 ProgramMode = Program_Mode.GAME;
             }
+            
+            StartCoroutine(DoorOpenEffect());
         }
         
         if (ProgramMode == Program_Mode.START_SCREEN)
@@ -85,5 +88,17 @@ public class GameManager : MonoBehaviour
     public b32 ShouldMove()
     {
         return ProgramMode == Program_Mode.GAME;
+    }
+    
+    IEnumerator DoorOpenEffect()
+    {
+        yield return new WaitForSeconds(5.0f);
+        MiddleDoor.GetComponent<AudioSource>().Play();
+        
+        yield return new WaitForSeconds(5.0f);
+        MiddleDoor.GetComponent<AudioSource>().Play();
+        
+        yield return new WaitForSeconds(7.0f);
+        MiddleDoor.GetComponent<Animation>().Play("DoorOpen");
     }
 }

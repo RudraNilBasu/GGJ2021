@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VHSMat
-  m_Shader: {fileID: 4800000, guid: b7457420dda857c46907a3b3e95dd0b8, type: 3}
-  m_ShaderKeywords: 
+  m_Name: NightSky
+  m_Shader: {fileID: 106, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _SUNDISK_HIGH_QUALITY
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -19,6 +19,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BackTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -35,7 +39,19 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DownTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FrontTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LeftTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -55,43 +71,41 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SecondaryTex:
-        m_Texture: {fileID: 2800000, guid: 89463daf9bb07dd4892e8c7c0ad6b3e6, type: 3}
+    - _RightTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _UpTex:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AtmosphereThickness: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _Exposure: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Intensity: 0.991
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _OffsetColor: 0.002
-    - _OffsetDistortion: 1500
-    - _OffsetNoiseX: 0.06886017
-    - _OffsetNoiseY: 78.11557
-    - _OffsetPosY: 0
     - _Parallax: 0.02
-    - _ScanLines: 1.17
+    - _Rotation: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _SunDisk: 2
+    - _SunSize: 0
+    - _SunSizeConvergence: 1
     - _UVSec: 0
     - _ZWrite: 1
-    - _scanLines: 1
-    - hardPix: -2.71
-    - hardScan: -11.44
-    - maskDark: 1.35
-    - maskLight: 0
-    - resScale: 5.27
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ScanLinesColor: {r: 0, g: 0, b: 0, a: 0}
-    - warp: {r: 0.03125, g: 0.04166, b: 0, a: 0}
+    - _GroundColor: {r: 0.369, g: 0.349, b: 0.341, a: 1}
+    - _SkyTint: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
   m_BuildTextureStacks: []
