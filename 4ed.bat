@@ -1,0 +1,1 @@
+start "" /max "W:\4coder\4coder-win-x64\4coder\4ed.exe"

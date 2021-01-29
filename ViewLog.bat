@@ -1,0 +1,1 @@
+powershell -command "type -wait W:\Memories\Build.log"
