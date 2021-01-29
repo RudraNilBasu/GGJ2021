@@ -29,12 +29,16 @@ public class Player : MonoBehaviour
     
     f32 NormalPlayerSpeed = 3.0f; //1.5f;
     
+    public b32 CollidedWithLetter;
+    
     void Start()
     {
         PlayerCapsuleCollider = GetComponent<CapsuleCollider>();
         RigidBody = GetComponent<Rigidbody>();
         
         MovementSpeed = NormalPlayerSpeed;
+        
+        CollidedWithLetter = false;
     }
     
     void FixedUpdate()
@@ -105,16 +109,6 @@ public class Player : MonoBehaviour
         }
     }
     
-    void OnTriggerEnter(Collider coll)
-    {
-        
-    }
-    
-    void OnTriggerExit(Collider coll)
-    {
-        
-    }
-    
     public b32 GroundCheck(v3 Position)
     {
         RaycastHit hit;
@@ -135,4 +129,19 @@ public class Player : MonoBehaviour
         }
     }
     
+    void OnTriggerEnter(Collider Coll)
+    {
+        if (Coll.tag == "Letter")
+        {
+            CollidedWithLetter = true;
+        }
+    }
+    
+    void OnTriggerExit(Collider Coll)
+    {
+        if (Coll.tag == "Letter")
+        {
+            CollidedWithLetter = false;
+        }
+    }
 }
