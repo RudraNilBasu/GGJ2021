@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
 
 // TODO(@rudra): Move this to a common file
 using f32 = System.Single;
@@ -106,10 +108,18 @@ public class GameManager : MonoBehaviour
     
     public GameObject RightDoor, RightDoorPivot;
     
-    public AudioClip PowerDownAudio;
+    public AudioClip PowerDownAudio, VCR_Low, VCR_Mid, VCR_High;
     AudioSource GM_AudioSource;
     
     i32 OtherNotesProgressHash, GameCompleteHash;
+    
+    public GameObject Human;
+    
+    public AudioMixer GameMixer;
+    
+    f32 VCR_Current_Volume, VCR_Target_Volume, T;
+    
+    public GameObject ReadingBackground;
     
     // Start is called before the first frame update
     void Start()
@@ -127,8 +137,18 @@ public class GameManager : MonoBehaviour
         OtherNotesProgressHash = 0;
         GameCompleteHash = (1 << (i32)Letter.Tag.OTHER_1) | (1 << (i32)Letter.Tag.OTHER_2) | (1 << (i32)Letter.Tag.OTHER_3) | (1 << (i32)Letter.Tag.OTHER_4);
         
+        Human.SetActive(false);
+        
         BlackScreen.SetActive(false);
         Credits.SetActive(false);
+        
+        GameMixer.GetFloat("GM_Volume", out VCR_Current_Volume);
+        VCR_Target_Volume = VCR_Current_Volume;
+        T = 0.0f;
+#if IGNORED
+        GameMixer.GetFloat("GM_Volume", out OriginalTrainVolume);
+        GameMixer.SetFloat("GM_Volume", OriginalTorchSound);
+#endif
     }
     
     
@@ -197,7 +217,19 @@ public class GameManager : MonoBehaviour
             if (GamePlayState == GAMEPLAY_STATE.RIGHT_DOOR_OPENED)
             {
                 GamePlayState = GAMEPLAY_STATE.START_CRAZINESS;
+                Human.transform.rotation = Quaternion.Euler(0.0f, 25.0f, 0.0f);
                 Camera.IncreaseVHSVerticalOffset(0.04f);
+                
+                VCR_Target_Volume = 9.0f;
+                T = 0.0f;
+#if IGNORED
+                f32 CurrentPlayTime = GM_AudioSource.time;
+                
+                GM_AudioSource.clip = VCR_Mid;
+                GM_AudioSource.loop = true;
+                GM_AudioSource.Play();
+                GM_AudioSource.time = CurrentPlayTime;
+#endif
             }
         }
         
@@ -214,6 +246,7 @@ public class GameManager : MonoBehaviour
             CloseDoor();
             GamePlayState = GAMEPLAY_STATE.WAITING_FOR_NOTES;
             Letter_1.GetComponent<Animation>().Play("SendLetter");
+            Human.SetActive(true);
         }
         
         if (Camera.HitWithRaycast(LetterLayer) && ThePlayer.GetComponent<Player>().CollidedWithLetter)
@@ -298,6 +331,8 @@ public class GameManager : MonoBehaviour
             ReadingState = READING_STATE.READING;
         }
         
+        ReadingBackground.SetActive(ReadingState == READING_STATE.READING);
+        
         
         // NOTE(@rudra): Lever
         if (Camera.HitWithRaycast(LeverLayer) && ThePlayer.GetComponent<Player>().CollidedWithLever)
@@ -354,6 +389,7 @@ public class GameManager : MonoBehaviour
             {
                 GamePlayState = GAMEPLAY_STATE.RIGHT_DOOR_OPENED;
                 RightDoorPivot.GetComponent<Animation>().Play("RightDoorOpen");
+                RightDoor.GetComponent<AudioSource>().Play();
             }
         }
         
@@ -363,6 +399,10 @@ public class GameManager : MonoBehaviour
             
         }
         
+        GameMixer.GetFloat("GM_Volume", out VCR_Current_Volume);
+        VCR_Current_Volume = Mathf.Lerp(VCR_Current_Volume, VCR_Target_Volume, T);
+        GameMixer.SetFloat("GM_Volume", VCR_Current_Volume);
+        T += 1.0f*Time.deltaTime;
     }
     
     
@@ -445,6 +485,12 @@ public class GameManager : MonoBehaviour
         GM_AudioSource.Play();
         
         GamePlayState = GAMEPLAY_STATE.LEVER_ACTIVATED;
+        
+        yield return new WaitForSeconds(5.0f);
+        
+        GM_AudioSource.clip = VCR_Low;
+        GM_AudioSource.loop = true;
+        GM_AudioSource.Play();
     }
     
     f32 DistanceSq(v3 A, v3 B)
@@ -458,6 +504,17 @@ public class GameManager : MonoBehaviour
     
     IEnumerator FinishingSequence()
     {
+        f32 CurrentPlayTime = GM_AudioSource.time;
+        
+        VCR_Target_Volume = 19.0f;
+        T = 0.0f;
+#if IGNORED
+        GM_AudioSource.clip = VCR_High;
+        GM_AudioSource.loop = true;
+        GM_AudioSource.Play();
+        GM_AudioSource.time = CurrentPlayTime;
+#endif
+        
         Camera.IncreaseVHSVerticalOffset(0.1f);
         
         yield return new WaitForSeconds(5.5f);
@@ -466,6 +523,7 @@ public class GameManager : MonoBehaviour
         
         yield return new WaitForSeconds(15.5f);
         
+        GM_AudioSource.Stop();
         BlackScreen.SetActive(true);
         
         yield return new WaitForSeconds(5.5f);
@@ -473,5 +531,11 @@ public class GameManager : MonoBehaviour
         Credits.SetActive(true);
         
         GamePlayState = GAMEPLAY_STATE.CREDITS;
+        
+        Scene CurrentScene = SceneManager.GetActiveScene();
+        
+        yield return new WaitForSeconds(10.0f);
+        
+        SceneManager.LoadScene(CurrentScene.name);
     }
 }
