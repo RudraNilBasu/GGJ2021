@@ -8,11 +8,18 @@ public class Letter : MonoBehaviour
         NONE,
         FIRST,
         SECOND,
+        THIRD,
+        FOURTH,
+        OTHER_1,
+        OTHER_2,
+        OTHER_3,
+        OTHER_4,
     }
     
     public Tag LetterTag;
     
-    public string Contents;
+    [TextArea(15,20)]
+        public string Contents;
     
     // Start is called before the first frame update
     void Start()

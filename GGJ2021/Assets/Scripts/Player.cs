@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
     
     f32 NormalPlayerSpeed = 3.0f; //1.5f;
     
-    public b32 CollidedWithLetter;
+    public b32 CollidedWithLetter, CollidedWithLever;
     
     void Start()
     {
@@ -135,6 +135,10 @@ public class Player : MonoBehaviour
         {
             CollidedWithLetter = true;
         }
+        if (Coll.tag == "Lever")
+        {
+            CollidedWithLever = true;
+        }
     }
     
     void OnTriggerExit(Collider Coll)
@@ -142,6 +146,10 @@ public class Player : MonoBehaviour
         if (Coll.tag == "Letter")
         {
             CollidedWithLetter = false;
+        }
+        if (Coll.tag == "Lever")
+        {
+            CollidedWithLever = false;
         }
     }
 }
