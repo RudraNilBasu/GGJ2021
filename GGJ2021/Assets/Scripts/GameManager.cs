@@ -53,6 +53,8 @@ public class GameManager : MonoBehaviour
         INIT,
         FIRST_COLLECTED,
         WAITING_FOR_NOTES,
+        READ_FIRST_NOTE,
+        SECOND_NOTE_SENT,
     }
     public GAMEPLAY_STATE GamePlayState;
     
@@ -69,6 +71,16 @@ public class GameManager : MonoBehaviour
     
     b32 EKeyProcessed;
     
+    public GameObject []StartScreenItems;
+    public GameObject ThePlayer;
+    
+    public GameObject Letter, Letter_2;
+    
+    AudioSource DoorAudioSource;
+    public AudioClip DoorKnock, DoorOpen, DoorClose;
+    
+    public Transform Letter_1_Table_Position;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -77,14 +89,11 @@ public class GameManager : MonoBehaviour
         GamePlayState = GAMEPLAY_STATE.INIT;
         ReadingState = READING_STATE.NONE;
         
+        DoorAudioSource = MiddleDoor.GetComponent<AudioSource>();
         // TODO: DELETE
         //Letter.GetComponent<Animation>().Play("SendLetter");
     }
     
-    public GameObject []StartScreenItems;
-    public GameObject ThePlayer;
-    
-    public GameObject Letter;
     
     // Update is called once per frame
     void Update()
@@ -176,6 +185,15 @@ public class GameManager : MonoBehaviour
         {
             EKeyProcessed = true;
             ReadingState = READING_STATE.CAN_READ;
+            
+            if (GamePlayState == GAMEPLAY_STATE.WAITING_FOR_NOTES)
+            {
+                GamePlayState = GAMEPLAY_STATE.READ_FIRST_NOTE;
+                Letter.transform.position = Letter_1_Table_Position.position;
+                
+                GamePlayState = GAMEPLAY_STATE.SECOND_NOTE_SENT;
+                Letter_2.GetComponent<Animation>().Play("SendLetter");
+            }
         }
         
         
@@ -203,6 +221,10 @@ public class GameManager : MonoBehaviour
             {
                 LetterText.text = "It's the guy behind the other door\nHe's the one doing all these";
             }
+            else if (GamePlayState == GAMEPLAY_STATE.SECOND_NOTE_SENT)
+            {
+                LetterText.text = "Together, we can destroy it";
+            }
         }
     }
     
@@ -214,6 +236,8 @@ public class GameManager : MonoBehaviour
     
     IEnumerator DoorOpenEffect()
     {
+        DoorAudioSource.clip = DoorKnock;
+        
         yield return new WaitForSeconds(5.0f);
         MiddleDoor.GetComponent<AudioSource>().Play();
         
@@ -227,6 +251,8 @@ public class GameManager : MonoBehaviour
     public void OpenDoor()
     {
         DoorState = DOOR_STATE.DOOR_OPEN;
+        DoorAudioSource.clip = DoorOpen;
+        MiddleDoor.GetComponent<AudioSource>().Play();
         MiddleDoor.GetComponent<Animation>().Play("DoorOpen");
     }
     
@@ -234,6 +260,8 @@ public class GameManager : MonoBehaviour
     public void CloseDoor()
     {
         DoorState = DOOR_STATE.DOOR_CLOSED;
+        DoorAudioSource.clip = DoorClose;
+        MiddleDoor.GetComponent<AudioSource>().Play();
         MiddleDoor.GetComponent<Animation>().Play("DoorClose");
     }
     
