@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
         WAITING_FOR_NOTES,
         READ_FIRST_NOTE,
         SECOND_NOTE_SENT,
+        READ_SECOND_NOTE,
     }
     public GAMEPLAY_STATE GamePlayState;
     
@@ -74,12 +75,12 @@ public class GameManager : MonoBehaviour
     public GameObject []StartScreenItems;
     public GameObject ThePlayer;
     
-    public GameObject Letter, Letter_2;
+    public GameObject Letter_1, Letter_2;
     
     AudioSource DoorAudioSource;
     public AudioClip DoorKnock, DoorOpen, DoorClose;
     
-    public Transform Letter_1_Table_Position;
+    public Transform Letter_1_Table_Position, Letter_2_Table_Position;
     
     // Start is called before the first frame update
     void Start()
@@ -91,7 +92,7 @@ public class GameManager : MonoBehaviour
         
         DoorAudioSource = MiddleDoor.GetComponent<AudioSource>();
         // TODO: DELETE
-        //Letter.GetComponent<Animation>().Play("SendLetter");
+        //Letter_1.GetComponent<Animation>().Play("SendLetter");
     }
     
     
@@ -164,7 +165,7 @@ public class GameManager : MonoBehaviour
         {
             CloseDoor();
             GamePlayState = GAMEPLAY_STATE.WAITING_FOR_NOTES;
-            Letter.GetComponent<Animation>().Play("SendLetter");
+            Letter_1.GetComponent<Animation>().Play("SendLetter");
         }
         
         if (Camera.HitWithRaycast(LetterLayer) && ThePlayer.GetComponent<Player>().CollidedWithLetter)
@@ -186,14 +187,30 @@ public class GameManager : MonoBehaviour
             EKeyProcessed = true;
             ReadingState = READING_STATE.CAN_READ;
             
-            if (GamePlayState == GAMEPLAY_STATE.WAITING_FOR_NOTES)
+            Letter _L = Camera.LookingAt.GetComponent<Letter>();
+            if (_L.LetterTag == Letter.Tag.FIRST)
             {
-                GamePlayState = GAMEPLAY_STATE.READ_FIRST_NOTE;
-                Letter.transform.position = Letter_1_Table_Position.position;
-                
-                GamePlayState = GAMEPLAY_STATE.SECOND_NOTE_SENT;
-                Letter_2.GetComponent<Animation>().Play("SendLetter");
+                if (GamePlayState == GAMEPLAY_STATE.WAITING_FOR_NOTES)
+                {
+                    GamePlayState = GAMEPLAY_STATE.READ_FIRST_NOTE;
+                    Letter_1.transform.position = Letter_1_Table_Position.position;
+                    
+                    GamePlayState = GAMEPLAY_STATE.SECOND_NOTE_SENT;
+                    Letter_2.GetComponent<Animation>().Play("SendLetter");
+                }
             }
+            else if (_L.LetterTag == Letter.Tag.SECOND)
+            {
+                if (GamePlayState == GAMEPLAY_STATE.SECOND_NOTE_SENT)
+                {
+                    GamePlayState = GAMEPLAY_STATE.READ_SECOND_NOTE;
+                    Letter_2.transform.position = Letter_2_Table_Position.position;
+                    
+                    GamePlayState = GAMEPLAY_STATE.SECOND_NOTE_SENT;
+                    //Letter_2.GetComponent<Animation>().Play("SendLetter");
+                }
+            }
+            
         }
         
         
@@ -217,13 +234,10 @@ public class GameManager : MonoBehaviour
         LetterText.text = "";
         if (ReadingState == READING_STATE.READING)
         {
-            if (GamePlayState == GAMEPLAY_STATE.WAITING_FOR_NOTES)
+            Letter _L = Camera.LookingAt.GetComponent<Letter>();
+            if (_L != null)
             {
-                LetterText.text = "It's the guy behind the other door\nHe's the one doing all these";
-            }
-            else if (GamePlayState == GAMEPLAY_STATE.SECOND_NOTE_SENT)
-            {
-                LetterText.text = "Together, we can destroy it";
+                LetterText.text = _L.Contents;
             }
         }
     }

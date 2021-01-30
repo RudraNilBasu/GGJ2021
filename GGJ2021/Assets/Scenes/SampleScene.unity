@@ -548,6 +548,7 @@ GameObject:
   - component: {fileID: 107094229}
   - component: {fileID: 107094228}
   - component: {fileID: 107094227}
+  - component: {fileID: 107094230}
   m_Layer: 9
   m_Name: Plane
   m_TagString: Untagged
@@ -632,6 +633,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 107094225}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &107094230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107094225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 877067bcfa3011a4b9d24dff8f0fc1d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LetterTag: 1
+  Contents: It's the guy behind the other door.... He's the one doing all these
 --- !u!1 &144378716
 GameObject:
   m_ObjectHideFlags: 0
@@ -693,6 +708,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 735834844}
+  - {fileID: 694870025}
   m_Father: {fileID: 590864121}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2420,6 +2436,36 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 659452386}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &694870024
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 694870025}
+  m_Layer: 0
+  m_Name: Letter #2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &694870025
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694870024}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.8629999, y: -0.5790001, z: 0.171}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 163482353}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &735834843
 GameObject:
   m_ObjectHideFlags: 0
@@ -2512,12 +2558,13 @@ MonoBehaviour:
   - {fileID: 1009032428}
   - {fileID: 963194225}
   ThePlayer: {fileID: 1031880527}
-  Letter: {fileID: 221878538}
+  Letter_1: {fileID: 221878538}
   Letter_2: {fileID: 1024311857}
   DoorKnock: {fileID: 8300000, guid: de08d99943be97f43a824462efb68d25, type: 3}
   DoorOpen: {fileID: 8300000, guid: 22cd3ddcb6eea5c4e867ff2b8c023616, type: 3}
   DoorClose: {fileID: 8300000, guid: ef2a9725856387441bf264f099620ec2, type: 3}
   Letter_1_Table_Position: {fileID: 735834844}
+  Letter_2_Table_Position: {fileID: 694870025}
 --- !u!1 &832189502
 GameObject:
   m_ObjectHideFlags: 0
@@ -2953,10 +3000,10 @@ RectTransform:
   m_Father: {fileID: 1217583065}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 16, y: -329}
-  m_SizeDelta: {x: 390.26892, y: 73.17542}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 36.587708}
+  m_SizeDelta: {x: 0, y: 73.175415}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1009032430
 MonoBehaviour:
@@ -3659,6 +3706,7 @@ GameObject:
   - component: {fileID: 1231125917}
   - component: {fileID: 1231125916}
   - component: {fileID: 1231125915}
+  - component: {fileID: 1231125918}
   m_Layer: 9
   m_Name: Plane
   m_TagString: Untagged
@@ -3743,6 +3791,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1231125913}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1231125918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1231125913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 877067bcfa3011a4b9d24dff8f0fc1d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LetterTag: 2
+  Contents: Together, we can destroy it
 --- !u!1 &1235693550
 GameObject:
   m_ObjectHideFlags: 0
@@ -5649,10 +5711,10 @@ RectTransform:
   m_Father: {fileID: 1217583065}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 16, y: 280}
-  m_SizeDelta: {x: 390.26892, y: 73.17542}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -76}
+  m_SizeDelta: {x: 0, y: 73.175415}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2070178169
 MonoBehaviour:
@@ -5687,7 +5749,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: GGJ 2021
+  m_Text: Fake / <color=red>Illusion</color>
 --- !u!222 &2070178170
 CanvasRenderer:
   m_ObjectHideFlags: 0
