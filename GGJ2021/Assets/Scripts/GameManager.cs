@@ -63,6 +63,7 @@ public class GameManager : MonoBehaviour
         READ_THIRD_NOTE,
         FOURTH_NOTE_SENT,
         READ_FOURTH_NOTE,
+        LEVER_SEQUENCE,
         LEVER_ACTIVATED,
         RIGHT_DOOR_OPENED,
         START_CRAZINESS,
@@ -107,6 +108,7 @@ public class GameManager : MonoBehaviour
     public GameObject []AllLightsToTurnOffAfterLever;
     
     public GameObject RightDoor, RightDoorPivot;
+    public AudioClip RightDoorThumping, RightDoorOpen;
     
     public AudioClip PowerDownAudio, VCR_Low, VCR_Mid, VCR_High;
     AudioSource GM_AudioSource;
@@ -120,6 +122,11 @@ public class GameManager : MonoBehaviour
     f32 VCR_Current_Volume, VCR_Target_Volume, T;
     
     public GameObject ReadingBackground;
+    
+    public AudioSource ELEKTRICITY;
+    
+    public GameObject FirstCoffinLight, SecondCoffinLight, ThirdCoffinLight;
+    b32 FirstCoffinActivated, SecondCoffinActivated, ThirdCoffinActivated;
     
     // Start is called before the first frame update
     void Start()
@@ -145,6 +152,14 @@ public class GameManager : MonoBehaviour
         GameMixer.GetFloat("GM_Volume", out VCR_Current_Volume);
         VCR_Target_Volume = VCR_Current_Volume;
         T = 0.0f;
+        
+        FirstCoffinActivated = false;
+        SecondCoffinActivated = false;
+        ThirdCoffinActivated = false;
+        
+        FirstCoffinLight.SetActive(false);
+        SecondCoffinLight.SetActive(false);
+        ThirdCoffinLight.SetActive(false);
 #if IGNORED
         GameMixer.GetFloat("GM_Volume", out OriginalTrainVolume);
         GameMixer.SetFloat("GM_Volume", OriginalTorchSound);
@@ -172,6 +187,7 @@ public class GameManager : MonoBehaviour
             if (ProgramMode == Program_Mode.START_SCREEN)
             {
                 ProgramMode = Program_Mode.GAME;
+                ELEKTRICITY.Play();
             }
             
             StartCoroutine(DoorOpenEffect());
@@ -238,7 +254,16 @@ public class GameManager : MonoBehaviour
         {
             CloseDoor();
             
-            StartCoroutine(OpenDoorWhenCollected());
+            StartCoroutine(ActivateCoffins());
+            //StartCoroutine(OpenDoorWhenCollected());
+        }
+        
+        
+        if (CurrentPlayerRoom == PLAYER_CURRENT_ROOM.ROOM_2 && DoorState == DOOR_STATE.DOOR_OPEN && GamePlayState == GAMEPLAY_STATE.READ_FOURTH_NOTE)
+        {
+            CloseDoor();
+            GamePlayState = GAMEPLAY_STATE.LEVER_SEQUENCE;
+            StartCoroutine(WaitAndStartCoffinsAndInitLever());
         }
         
         if (CurrentPlayerRoom == PLAYER_CURRENT_ROOM.ROOM_1 && DoorState == DOOR_STATE.DOOR_OPEN && GamePlayState == GAMEPLAY_STATE.FIRST_COLLECTED)
@@ -385,11 +410,14 @@ public class GameManager : MonoBehaviour
         {
             f32 SqDistanceFromPlayer = DistanceSq(RightDoor.transform.position, ThePlayer.transform.position);
             
-            if (SqDistanceFromPlayer <= 5.0f)
+            if (SqDistanceFromPlayer <= 30.0f)
             {
                 GamePlayState = GAMEPLAY_STATE.RIGHT_DOOR_OPENED;
                 RightDoorPivot.GetComponent<Animation>().Play("RightDoorOpen");
-                RightDoor.GetComponent<AudioSource>().Play();
+                
+                AudioSource RightDoorAudio = RightDoor.GetComponent<AudioSource>();
+                RightDoorAudio.clip = RightDoorOpen;
+                RightDoorAudio.Play();
             }
         }
         
@@ -403,6 +431,32 @@ public class GameManager : MonoBehaviour
         VCR_Current_Volume = Mathf.Lerp(VCR_Current_Volume, VCR_Target_Volume, T);
         GameMixer.SetFloat("GM_Volume", VCR_Current_Volume);
         T += 1.0f*Time.deltaTime;
+        
+        // NOTE(@rudra): Coffin sequence
+        if (FirstCoffinActivated)
+        {
+            f32 SqDistanceFromPlayer = DistanceSq(FirstCoffinLight.transform.position, ThePlayer.transform.position);
+            if (SqDistanceFromPlayer <= 2.0f)
+            {
+                StartCoroutine(WaitAndActivateSecondCoffin());
+            }
+        }
+        if (SecondCoffinActivated)
+        {
+            f32 SqDistanceFromPlayer = DistanceSq(SecondCoffinLight.transform.position, ThePlayer.transform.position);
+            if (SqDistanceFromPlayer <= 2.0f)
+            {
+                StartCoroutine(WaitAndActivateThirdCoffin());
+            }
+        }
+        if (ThirdCoffinActivated)
+        {
+            f32 SqDistanceFromPlayer = DistanceSq(ThirdCoffinLight.transform.position, ThePlayer.transform.position);
+            if (SqDistanceFromPlayer <= 2.0f)
+            {
+                StartCoroutine(WaitAndActivateOpenDoor());
+            }
+        }
     }
     
     
@@ -444,7 +498,7 @@ public class GameManager : MonoBehaviour
     IEnumerator OpenDoorAndEnableLever()
     {
         yield return new WaitForSeconds(5.0f);
-        Lever.transform.parent.gameObject.SetActive(true);
+        //Lever.transform.parent.gameObject.SetActive(true);
         OpenDoor();
     }
     
@@ -455,6 +509,8 @@ public class GameManager : MonoBehaviour
         MiddleDoor.GetComponent<AudioSource>().Play();
     }
     
+    // TODO(@rudra): Unreachable code, remove
+    /*
     IEnumerator OpenDoorWhenCollected()
     {
         // TODO(@rudra): NONONONONONONONONONONONONONO
@@ -468,10 +524,11 @@ public class GameManager : MonoBehaviour
             OpenDoor();
         }
     }
+    */
     
     IEnumerator LightOffSequence()
     {
-        CloseDoor();
+        //CloseDoor();
         
         yield return new WaitForSeconds(1.5f);
         
@@ -483,6 +540,15 @@ public class GameManager : MonoBehaviour
         }
         GM_AudioSource.clip = PowerDownAudio;
         GM_AudioSource.Play();
+        ELEKTRICITY.Stop();
+        
+        FirstCoffinLight.SetActive(false);
+        SecondCoffinLight.SetActive(false);
+        ThirdCoffinLight.SetActive(false);
+        
+        AudioSource RightDoorAudio = RightDoor.GetComponent<AudioSource>();
+        RightDoorAudio.loop = false;
+        RightDoorAudio.Stop();
         
         GamePlayState = GAMEPLAY_STATE.LEVER_ACTIVATED;
         
@@ -493,14 +559,84 @@ public class GameManager : MonoBehaviour
         GM_AudioSource.Play();
     }
     
+    f32 Square(f32 A)
+    {
+        f32 Result = A*A;
+        
+        return(Result);
+    }
+    
     f32 DistanceSq(v3 A, v3 B)
     {
         f32 Result;
         
-        Result = (A.x - B.x) + (A.y - B.y) + (A.z - B.z);
+        Result = Square(A.x - B.x) + Square(A.y - B.y) + Square(A.z - B.z);
         
         return(Result);
     }
+    
+    IEnumerator ActivateCoffins()
+    {
+        yield return new WaitForSeconds(5.0f);
+        FirstCoffinActivated = true;
+        FirstCoffinLight.SetActive(true);
+    }
+    
+    IEnumerator WaitAndActivateSecondCoffin()
+    {
+        yield return new WaitForSeconds(5.0f);
+        FirstCoffinLight.SetActive(false);
+        FirstCoffinActivated = false;
+        SecondCoffinActivated = true;
+        SecondCoffinLight.SetActive(true);
+    }
+    
+    
+    IEnumerator WaitAndActivateThirdCoffin()
+    {
+        yield return new WaitForSeconds(5.0f);
+        SecondCoffinLight.SetActive(false);
+        SecondCoffinActivated = false;
+        ThirdCoffinActivated = true;
+        ThirdCoffinLight.SetActive(true);
+    }
+    
+    
+    IEnumerator WaitAndActivateOpenDoor()
+    {
+        yield return new WaitForSeconds(5.0f);
+        ThirdCoffinLight.SetActive(false);
+        ThirdCoffinActivated = false;
+        
+        yield return new WaitForSeconds(10.0f);
+        
+        GamePlayState = GAMEPLAY_STATE.FIRST_COLLECTED;
+        
+        if (DoorState == DOOR_STATE.DOOR_CLOSED && CurrentPlayerRoom == PLAYER_CURRENT_ROOM.ROOM_2)
+        {
+            OpenDoor();
+        }
+    }
+    
+    IEnumerator WaitAndStartCoffinsAndInitLever()
+    {
+        yield return new WaitForSeconds(5.0f);
+        
+        FirstCoffinLight.SetActive(true);
+        SecondCoffinLight.SetActive(true);
+        ThirdCoffinLight.SetActive(true);
+        
+        yield return new WaitForSeconds(10.0f);
+        
+        AudioSource RightDoorAudio = RightDoor.GetComponent<AudioSource>();
+        RightDoorAudio.clip = RightDoorThumping;
+        RightDoorAudio.loop = true;
+        RightDoorAudio.Play();
+        
+        yield return new WaitForSeconds(10.0f);
+        Lever.transform.parent.gameObject.SetActive(true);
+    }
+    
     
     IEnumerator FinishingSequence()
     {

@@ -47,15 +47,15 @@ public class CameraRotation : MonoBehaviour
     
     public void CheckEdges()
     {
-        if (TheCamera.transform.localRotation.x > 0.3f)
+        if (TheCamera.transform.localRotation.x > 0.5f)
         {
             Quaternion CameraLocalRotation = TheCamera.transform.localRotation;
-            TheCamera.transform.localRotation = new Quaternion(0.3f, CameraLocalRotation.y, CameraLocalRotation.z, CameraLocalRotation.w);
+            TheCamera.transform.localRotation = new Quaternion(0.5f, CameraLocalRotation.y, CameraLocalRotation.z, CameraLocalRotation.w);
         }
-        if (TheCamera.transform.localRotation.x < -0.2f)
+        if (TheCamera.transform.localRotation.x < -0.4f)
         {
             Quaternion CameraLocalRotation = TheCamera.transform.localRotation;
-            TheCamera.transform.localRotation = new Quaternion(-0.2f, CameraLocalRotation.y, CameraLocalRotation.z, CameraLocalRotation.w);
+            TheCamera.transform.localRotation = new Quaternion(-0.4f, CameraLocalRotation.y, CameraLocalRotation.z, CameraLocalRotation.w);
         }
     }
 }
