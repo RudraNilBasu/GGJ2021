@@ -128,6 +128,9 @@ public class GameManager : MonoBehaviour
     public GameObject FirstCoffinLight, SecondCoffinLight, ThirdCoffinLight;
     b32 FirstCoffinActivated, SecondCoffinActivated, ThirdCoffinActivated;
     
+    
+    public b32 StartedAlready;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -160,6 +163,8 @@ public class GameManager : MonoBehaviour
         FirstCoffinLight.SetActive(false);
         SecondCoffinLight.SetActive(false);
         ThirdCoffinLight.SetActive(false);
+        
+        StartedAlready = false;
 #if IGNORED
         GameMixer.GetFloat("GM_Volume", out OriginalTrainVolume);
         GameMixer.SetFloat("GM_Volume", OriginalTorchSound);
@@ -170,6 +175,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //print(GamePlayState);
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (ProgramMode == Program_Mode.MENU)
@@ -270,15 +276,24 @@ public class GameManager : MonoBehaviour
         {
             CloseDoor();
             GamePlayState = GAMEPLAY_STATE.WAITING_FOR_NOTES;
+            
             Letter_1.GetComponent<Animation>().Play("SendLetter");
             Human.SetActive(true);
         }
         
         if (Camera.HitWithRaycast(LetterLayer) && ThePlayer.GetComponent<Player>().CollidedWithLetter)
         {
-            if (ReadingState == READING_STATE.NONE)
+            Animation LetterAnimation = Camera.LookingAt.transform.parent.gameObject.GetComponent<Animation>();
+            if (LetterAnimation.isPlaying)
             {
-                ReadingState = READING_STATE.CAN_READ;
+            }
+            else
+            {
+                
+                if (ReadingState == READING_STATE.NONE)
+                {
+                    ReadingState = READING_STATE.CAN_READ;
+                }
             }
         }
         else
@@ -449,7 +464,7 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(WaitAndActivateThirdCoffin());
             }
         }
-        if (ThirdCoffinActivated)
+        if (ThirdCoffinActivated && !StartedAlready)
         {
             f32 SqDistanceFromPlayer = DistanceSq(ThirdCoffinLight.transform.position, ThePlayer.transform.position);
             if (SqDistanceFromPlayer <= 2.0f)
@@ -604,6 +619,9 @@ public class GameManager : MonoBehaviour
     
     IEnumerator WaitAndActivateOpenDoor()
     {
+        // TODO(@rudra): Find a better way, too tired now
+        StartedAlready = true;
+        
         yield return new WaitForSeconds(5.0f);
         ThirdCoffinLight.SetActive(false);
         ThirdCoffinActivated = false;
