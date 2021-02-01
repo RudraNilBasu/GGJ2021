@@ -128,7 +128,9 @@ public class GameManager : MonoBehaviour
     public GameObject FirstCoffinLight, SecondCoffinLight, ThirdCoffinLight;
     b32 FirstCoffinActivated, SecondCoffinActivated, ThirdCoffinActivated;
     
+    f32 CoffinMinDistance;
     
+    // TODO(@rudra): HACXXXX
     public b32 StartedAlready;
     
     // Start is called before the first frame update
@@ -164,7 +166,10 @@ public class GameManager : MonoBehaviour
         SecondCoffinLight.SetActive(false);
         ThirdCoffinLight.SetActive(false);
         
+        CoffinMinDistance = 14.0f;
+        
         StartedAlready = false;
+        
 #if IGNORED
         GameMixer.GetFloat("GM_Volume", out OriginalTrainVolume);
         GameMixer.SetFloat("GM_Volume", OriginalTorchSound);
@@ -198,6 +203,13 @@ public class GameManager : MonoBehaviour
             
             StartCoroutine(DoorOpenEffect());
         }
+        
+        
+        if (Input.GetKeyDown(KeyCode.Escape) && ProgramMode == Program_Mode.START_SCREEN)
+        {
+            Application.Quit(0);
+        }
+        
         
         if (ProgramMode == Program_Mode.START_SCREEN)
         {
@@ -451,7 +463,7 @@ public class GameManager : MonoBehaviour
         if (FirstCoffinActivated)
         {
             f32 SqDistanceFromPlayer = DistanceSq(FirstCoffinLight.transform.position, ThePlayer.transform.position);
-            if (SqDistanceFromPlayer <= 2.0f)
+            if (SqDistanceFromPlayer <= CoffinMinDistance)
             {
                 StartCoroutine(WaitAndActivateSecondCoffin());
             }
@@ -459,7 +471,7 @@ public class GameManager : MonoBehaviour
         if (SecondCoffinActivated)
         {
             f32 SqDistanceFromPlayer = DistanceSq(SecondCoffinLight.transform.position, ThePlayer.transform.position);
-            if (SqDistanceFromPlayer <= 2.0f)
+            if (SqDistanceFromPlayer <= CoffinMinDistance)
             {
                 StartCoroutine(WaitAndActivateThirdCoffin());
             }
@@ -467,7 +479,7 @@ public class GameManager : MonoBehaviour
         if (ThirdCoffinActivated && !StartedAlready)
         {
             f32 SqDistanceFromPlayer = DistanceSq(ThirdCoffinLight.transform.position, ThePlayer.transform.position);
-            if (SqDistanceFromPlayer <= 2.0f)
+            if (SqDistanceFromPlayer <= CoffinMinDistance)
             {
                 StartCoroutine(WaitAndActivateOpenDoor());
             }
@@ -599,7 +611,7 @@ public class GameManager : MonoBehaviour
     
     IEnumerator WaitAndActivateSecondCoffin()
     {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(10.0f);
         FirstCoffinLight.SetActive(false);
         FirstCoffinActivated = false;
         SecondCoffinActivated = true;
@@ -609,7 +621,7 @@ public class GameManager : MonoBehaviour
     
     IEnumerator WaitAndActivateThirdCoffin()
     {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(10.0f);
         SecondCoffinLight.SetActive(false);
         SecondCoffinActivated = false;
         ThirdCoffinActivated = true;
@@ -622,7 +634,7 @@ public class GameManager : MonoBehaviour
         // TODO(@rudra): Find a better way, too tired now
         StartedAlready = true;
         
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(10.0f);
         ThirdCoffinLight.SetActive(false);
         ThirdCoffinActivated = false;
         

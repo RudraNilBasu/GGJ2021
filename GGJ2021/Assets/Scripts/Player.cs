@@ -30,9 +30,12 @@ public class Player : MonoBehaviour
     f32 NormalPlayerSpeed = 3.0f; //1.5f;
     
     public b32 CollidedWithLetter, CollidedWithLever;
+    i32 CollideWithLetterCount;
     
     void Start()
     {
+        CollideWithLetterCount = 0;
+        
         PlayerCapsuleCollider = GetComponent<CapsuleCollider>();
         RigidBody = GetComponent<Rigidbody>();
         
@@ -133,6 +136,7 @@ public class Player : MonoBehaviour
     {
         if (Coll.tag == "Letter")
         {
+            CollideWithLetterCount++;
             CollidedWithLetter = true;
         }
         if (Coll.tag == "Lever")
@@ -145,7 +149,11 @@ public class Player : MonoBehaviour
     {
         if (Coll.tag == "Letter")
         {
-            CollidedWithLetter = false;
+            CollideWithLetterCount--;
+            if (CollideWithLetterCount <= 0)
+            {
+                CollidedWithLetter = false;
+            }
         }
         if (Coll.tag == "Lever")
         {
